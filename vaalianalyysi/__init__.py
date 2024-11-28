@@ -1,1 +1,1 @@
-import vaalianalyysi.data
+from vaalianalyysi import data

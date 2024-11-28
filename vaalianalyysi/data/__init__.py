@@ -1,2 +1,2 @@
-import vaalianalyysi.data.download
-import vaalianalyysi.data.tulospalvelu
+from vaalianalyysi.data import download
+from vaalianalyysi.data import tulospalvelu
