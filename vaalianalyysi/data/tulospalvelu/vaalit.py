@@ -1,4 +1,6 @@
 import dataclasses
+import numpy as np
+
 from vaalianalyysi.data.tulospalvelu import df
 
 
@@ -62,6 +64,40 @@ class Vaalit:
             self._compute_alueet()
         return self._cached_alueet
 
+    def n(self, alueet):
+        """Alueittaiset äänioikeutettujen määrät"""
+        return np.array([self.alueet[a].n for a in alueet])
+
+    def v(self, alueet, puolueet):
+        """
+        Puolueittaiset äänimäärät
+
+        Kun nimettyjä puolueita on N ja alueita M, tämä on matriisi
+        kokoa (N+2)xM. Rivillä n on listattu nimetyn puolueen n äänet
+        alueittain. Rivillä -2 on muiden puolueiden äänet ja rivillä -1
+        nukkuvat äänet.
+        """
+        v = np.zeros((len(puolueet) + 2, len(alueet)))
+        d = self.tulokset_ehdokkaittain
+        d = d[d[d.columns[3]] == "A"]
+        d = d[[d.columns[2], d.columns[4], d.columns[7], d.columns[34]]]
+        for _, row in d.iterrows():
+            kunta = row[d.columns[0]]
+            alue = row[d.columns[1]]
+            kuntaalue = f"{kunta}-{alue}"
+            try:
+                i = alueet.index(kuntaalue)
+                try:
+                    puolue = row[d.columns[2]]
+                    j = puolueet.index(puolue)
+                except ValueError:
+                    j = -2
+                v[j, i] += row[d.columns[3]]
+            except ValueError:
+                pass
+        v[-1, :] = self.n(alueet) - np.sum(v, axis=0)
+        return v
+
     def _compute_puolueet(self):
         out = {}
         d = self.tulokset_ehdokkaittain
@@ -98,3 +134,33 @@ class Vaalit:
             luku = row[d.columns[3]]
             out[f"{kuntanro}-{aluetunnus}"] = Alue(kuntanro, aluetunnus, nimi, luku)
         self._cached_alueet = out
+
+    def puoluetunnukset(self, lyhenteet):
+        """Puoluetunnukset, jotka vastaavat annettuja nimilyhenteitä"""
+        out = []
+        for lyhenne in lyhenteet:
+            for _, v in self.puolueet.items():
+                if v.nimilyhenne_suomeksi == lyhenne:
+                    out.append(v.tunniste)
+                    break
+        return sorted(out)
+
+    @staticmethod
+    def aluevastaavuudet(v1, v2, r=10.0):
+        """
+        Kuntaalueet, jotka ovat vastaavia vaaleissa v1 ja v2
+
+        Kuntaalue katsotaan vastaavaksi, jos se löytyy molemmista
+        vaaleista, sen nimi on molemmissa sama, ja sen äänioikeuttujen
+        lukumäärä on muuttunut enentään r% vaaleista v1 vaaleihen v2.
+        """
+        out = []
+        for alue in set(v1.alueet.keys()) & set(v2.alueet.keys()):
+            a1 = v1.alueet[alue]
+            a2 = v2.alueet[alue]
+            if a1.nimi_suomeksi != a2.nimi_suomeksi:
+                continue
+            if 100 * np.abs(a2.n / a1.n - 1) > r:
+                continue
+            out.append(alue)
+        return sorted(out)
