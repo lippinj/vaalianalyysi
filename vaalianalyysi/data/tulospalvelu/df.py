@@ -12,6 +12,11 @@ def tulokset_ehdokkaittain(vaalit: str) -> pd.DataFrame:
     return _tulokset_csv(dl.tulokset_ehdokkaittain(vaalit), 2)
 
 
+def ehdokasasettajakohtaiset_tulokset(vaalit: str) -> pd.DataFrame:
+    """Ehdokasasettajakohtaiset tulokset"""
+    return _tulokset_csv(dl.ehdokasasettajakohtaiset_tulokset(vaalit), 1)
+
+
 def _tulokset_csv(csv_dl, wsn):
     """Oikeusministeriön tieto- ja tulospalvelun CSV"""
     head = dl.tulokset_otsikot().workbook()

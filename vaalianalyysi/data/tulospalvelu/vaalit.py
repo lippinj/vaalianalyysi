@@ -39,6 +39,9 @@ class Vaalit:
         self.vaalit = vaalit
         self.tulokset_ehdokkaittain = df.tulokset_ehdokkaittain(vaalit)
         self.tulokset_alueittain = df.tulokset_alueittain(vaalit)
+        self.ehdokasasettajakohtaiset_tulokset = df.ehdokasasettajakohtaiset_tulokset(
+            vaalit
+        )
         self._cached_puolueet = None
         self._cached_kunnat = None
         self._cached_alueet = None

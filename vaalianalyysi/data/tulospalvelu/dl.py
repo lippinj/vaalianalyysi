@@ -27,6 +27,16 @@ def tulokset_ehdokkaittain(vaalit: str) -> Download:
     return _cached(path, url, chk)
 
 
+def ehdokasasettajakohtaiset_tulokset(vaalit: str) -> Download:
+    """Ehdokasasettajakohtaiset tulokset"""
+    dirname = vaalit.upper()
+    prefix = vaalit.lower()
+    path = f"{dirname}/{prefix}_tpat_maa.csv"
+    url = f"{dirname}/{prefix}_puo_maa.csv.zip"
+    chk = f"{dirname}/{prefix}_puo_maa.csv.chk"
+    return _cached(path, url, chk)
+
+
 _CACHE = {}
 
 
