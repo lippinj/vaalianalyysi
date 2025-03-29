@@ -4,13 +4,14 @@ import zipfile
 from pathlib import Path
 
 import openpyxl
-import requests
+import requests_cache
 import pandas
 
 from vaalianalyysi.data import checksum
 
 
 _DATA_ROOT = Path(".vaalianalyysi-data")
+_SESSION = requests_cache.CachedSession()
 
 
 class Download:
@@ -79,6 +80,6 @@ class Download:
     @staticmethod
     def download(url: str) -> bytes:
         """Download file from an URL"""
-        r = requests.get(url, allow_redirects=True, timeout=60)
+        r = _SESSION.get(url, allow_redirects=True, timeout=60)
         assert r.status_code == 200
         return r.content
