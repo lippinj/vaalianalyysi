@@ -132,7 +132,7 @@ _tulokset_ehdokkaittain_map = {
      'Pysyvä puoluetunniste': 'puolue_tunniste',
      'Vakiopuoluenumero': '',
      'Listajärjestysnumero': '',
-     'Vaaliliittonumero': '',
+     'Vaaliliittonumero': 'vaaliliitto_nro',
      'Puolueen/ryhmän nimilyhenne suomeksi': 'puolue_lyhenne',
      'Puolueen/ryhmän nimilyhenne ruotsiksi': '',
      'Puolueen/ryhmän nimilyhenne englanniksi': '',
