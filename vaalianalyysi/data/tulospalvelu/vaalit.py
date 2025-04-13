@@ -24,7 +24,7 @@ _tulokset_alueittain_map = {
      'Äänioikeutetut Suomessa asuvat yhteensä': '',
      'Äänioikeutetut Suomessa asuvat miehet': '',
      'Äänioikeutetut Suomessa asuvat naiset': '',
-     'Valittavien lukumäärä': '',
+     'Valittavien lukumäärä': 'paikkoja',
      'Äänestysalueiden lukumäärä': '',
      'Vaalitapahtuman nimilyhenne 1. vertailuvaali': '',
      'Äänioik. Suomessa asuvat yht. 1. vertailuvaali': '',
@@ -160,8 +160,8 @@ _tulokset_ehdokkaittain_map = {
      'Osuus ennakkoäänistä (%)': '',
      'Osuus vaalipäivän äänistä (%)': '',
      'Osuus äänistä yht. (%)': '',
-     'Valintatieto': '',
-     'Vertausluku': '',
+     'Valintatieto': 'val',
+     'Vertausluku': 'vluk',
      'Sija': '',
      'Lopullinen sija': '',
      'Laskennan tila': '',
@@ -192,6 +192,7 @@ class Kunta:
     kuntanro: str
     nimi_suomeksi: str
     n: int
+    paikkoja: int
 
 
 @dataclasses.dataclass
@@ -285,12 +286,13 @@ class Vaalit:
         out = {}
         d = self.tulokset_alueittain
         d = d[d.alueen_tyyppi == "K"]
-        d = d[["kunta_nro", "nimi_fi", "N"]].drop_duplicates()
+        d = d[["kunta_nro", "nimi_fi", "N", "paikkoja"]].drop_duplicates()
         for _, row in d.iterrows():
             kuntanro = row.kunta_nro
             nimi = row.nimi_fi
             luku = row.N
-            out[kuntanro] = Kunta(kuntanro, nimi, luku)
+            paikkoja = row.paikkoja
+            out[kuntanro] = Kunta(kuntanro, nimi, luku, paikkoja)
         self._cached_kunnat = out
 
     def _compute_alueet(self):
